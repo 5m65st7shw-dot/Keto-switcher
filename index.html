@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>Keto Switcher</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;padding:20px;-webkit-tap-highlight-color:transparent}
+.header{text-align:center;margin-bottom:28px}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#60a5fa,#a78bfa);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.logo h1{font-size:32px;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{color:#9ca3af;font-size:15px}
+.card{background:#1a1a1a;border-radius:20px;padding:20px;margin-bottom:16px;border:1px solid #2a2a2a}
+.card-title{font-size:20px;font-weight:700;margin-bottom:16px}
+.macro-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.macro-item{background:#0f0f0f;border-radius:16px;padding:20px 12px;text-align:center;border:1px solid #2a2a2a}
+.macro-label{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280;margin-bottom:8px}
+.macro-value{font-size:32px;font-weight:800;margin-bottom:4px}
+.macro-pct{font-size:14px;color:#6b7280;margin-top:4px}
+.cal{color:#60a5fa}
+.fat{color:#fbbf24}
+.protein{color:#f87171}
+.carbs{color:#4ade80}
+.week-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.week-btn{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:20px;padding:24px 16px;text-align:center;color:#fff;cursor:pointer;transition:all .2s;position:relative}
+.week-btn.active{background:linear-gradient(135deg,#3b82f6,#8b5cf6);border-color:transparent}
+.week-btn:active{transform:scale(0.96)}
+.week-btn h3{font-size:22px;font-weight:700;margin-bottom:6px}
+.week-btn p{font-size:13px;color:#9ca3af}
+.week-btn.active p{color:rgba(255,255,255,0.8)}
+.cart-btn{position:absolute;bottom:12px;right:12px;width:40px;height:40px;background:rgba(59,130,246,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.day-card{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #2a2a2a}
+.day-title{font-size:18px;font-weight:700;margin-bottom:12px;color:#60a5fa}
+.meal{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #2a2a2a}
+.meal:last-child{border-bottom:none}
+.meal-name{font-size:15px}
+.meal-cal{font-size:13px;color:#9ca3af}
+.back-btn{background:#2a2a2a;border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:15px;cursor:pointer;margin-bottom:16px}
+.grocery-section{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #2a2a2a}
+.grocery-title{font-size:16px;font-weight:700;margin-bottom:10px;color:#fbbf24}
+.grocery-item{padding:6px 0;border-bottom:1px solid #2a2a2a;font-size:14px}
+.grocery-item:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div id="home">
+<div class="header"><div class="logo"><div class="logo-icon"></div><h1>Keto Switcher</h1></div><p class="subtitle">4-weken budgetvriendelijk mealplan • 16:8 • 1900 kcal</p></div>
+<div class="card"><div class="card-title">📊 Dagelijkse Macro Doelen</div><div class="macro-grid"><div class="macro-item"><div class="macro-label">Calorieën</div><div class="macro-value cal">1900</div><div class="macro-pct">kcal</div></div><div class="macro-item"><div class="macro-label">Vet</div><div class="macro-value fat">135g</div><div class="macro-pct">~64%</div></div><div class="macro-item"><div class="macro-label">Eiwit</div><div class="macro-value protein">143g</div><div class="macro-pct">~30%</div></div><div class="macro-item"><div class="macro-label">Netto KH</div><div class="macro-value carbs">20g</div><div class="macro-pct">~4%</div></div></div></div>
+<div class="week-grid"><div class="week-btn active" onclick="showWeek(1)"><h3>Week 1</h3><p>Dag 1-7</p></div><div class="week-btn" onclick="showWeek(2)"><h3>Week 2</h3><p>Dag 8-14</p></div><div class="week-btn" onclick="showWeek(3)"><h3>Week 3</h3><p>Dag 15-21</p></div><div class="week-btn" onclick="showWeek(4)"><h3>Week 4</h3><p>Dag 22-28</p><div class="cart-btn">🛒</div></div></div>
+</div>
+<div id="week-view" style="display:none"><button class="back-btn" onclick="goHome()">← Terug</button><div id="week-content"></div></div>
+<script>
+const m={
+1:{n:"Week 1 - Dag 1-7",d:[
+{day:"Dag 1",meals:[{n:"Lunch (12:00): Omelet met spek, kaas & spinazie",c:"750 kcal"},{n:"Diner (18:00): Gehaktbal in jus met bloemkoolpuree",c:"1150 kcal"}]},
+{day:"Dag 2",meals:[{n:"Lunch (12:00): Gegrilde kip met avocado & feta",c:"800 kcal"},{n:"Diner (18:00): Varkenshaas met champignonsaus & sperziebonen",c:"1100 kcal"}]},
+{day:"Dag 3",meals:[{n:"Lunch (12:00): Tonijnsalade (uit blik) met mayonaise, ei & komkommer",c:"700 kcal"},{n:"Diner (18:00): Kippendijen uit de oven met knoflook & broccoli",c:"1200 kcal"}]},
+{day:"Dag 4",meals:[{n:"Lunch (12:00): Courgette frittata met cheddar",c:"750 kcal"},{n:"Diner (18:00): Rundergehakt met paprika-uiensaus & courgetti",c:"1150 kcal"}]},
+{day:"Dag 5",meals:[{n:"Lunch (12:00): Gegrilde halloumi met geroosterde paprika & olijven",c:"800 kcal"},{n:"Diner (18:00): Kip cordon bleu (keto) met snijbonen",c:"1100 kcal"}]},
+{day:"Dag 6",meals:[{n:"Lunch (12:00): Bacon-ei muffins met kaas",c:"750 kcal"},{n:"Diner (18:00): Varkenslapjes in mosterdsaus met spruitjes",c:"1150 kcal"}]},
+{day:"Dag 7",meals:[{n:"Lunch (12:00): Gevulde paprika's met gehakt & mozzarella",c:"800 kcal"},{n:"Diner (18:00): Ribeye met knoflookboter & groene asperges",c:"1100 kcal"}]}
+],g:["Eieren (18 stuks)","Spek (200g)","Geraspte kaas (400g)","Spinazie (zak, 300g)","Gehakt (500g)","Bloemkool (2 stuks)","Roomboter (250g)","Kipfilet (600g)","Avocado (3 stuks)","Feta (200g)","Varkenshaas (400g)","Champignons (400g)","Sperziebonen (400g)","Tonijn in blik (3 blikjes)","Mayonaise (pot)","Komkommer (2 stuks)","Broccoli (2 stuks)","Courgette (4 stuks)","Cheddar (300g)","Paprika (3 stuks)","Ui (1 kg)","Halloumi (300g)","Olijven (pot)","Mozzarella (2 balletjes)","Snijbonen (400g)","Spekreepjes (200g)","Varkenslapjes (500g)","Spruitjes (500g)","Mosterd (pot)","Ribeye (400g)","Groene asperges (300g)"]},
+2:{n:"Week 2 - Dag 8-14",d:[
+{day:"Dag 8",meals:[{n:"Lunch (12:00): Spinazie-omelet met champignons & geraspte kaas",c:"750 kcal"},{n:"Diner (18:00): Kip saté:#2a2a2a;border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:15px;cursor:pointer;margin-bottom:16px}
+.grocery-section{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #2a2a2a}
+.grocery-title{font-size:16px;font-weight:700;margin-bottom:10px;color:#fbbf24}
+.grocery-item{padding:6px 0;border-bottom:1px solid #2a2a2a;font-size:14px}
+.grocery-item:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div id="home">
+<div class="header"><div class="logo"><div class="logo-icon"></div><h1>Keto Switcher</h1></div><p class="subtitle">4-weken budgetvriendelijk mealplan • 16:8 • 1900 kcal</p></div>
+<div class="card"><div class="card-title">📊 Dagelijkse Macro Doelen</div><div class="macro-grid"><div class="macro-item"><div class="macro-label">Calorieën</div><div class="macro-value cal">1900</div><div class="macro-pct">kcal</div></div><div class="macro-item"><div class="macro-label">Vet</div><div class="macro-value fat">135g</div><div class="macro-pct">~64%</div></div><div class="macro-item"><div class="macro-label">Eiwit</div><div class="macro-value protein">143g</div><div class="macro-pct">~30%</div></div><div class="macro-item"><div class="macro-label">Netto KH</div><div class="macro-value carbs">20g</div><div class="macro-pct">~4%</div></div></div></div>
+<div class="week-grid"><div class="week-btn active" onclick="showWeek(1)"><h3>Week 1</h3><p>Dag 1-7</p></div><div class="week-btn" onclick="showWeek(2)"><h3>Week 2</h3><p>Dag 8-14</p></div><div class="week-btn" onclick="showWeek(3)"><h3>Week 3</h3><p>Dag 15-21</p></div><div class="week-btn" onclick="showWeek(4)"><h3>Week 4</h3><p>Dag 22-28</p><div class="cart-btn">🛒</div></div></div>
+</div>
+<div id="week-view" style="display:none"><button class="back-btn" onclick="goHome()">← Terug</button><div id="week-content"></div></div>
+<script>
+const m={
+1:{n:"Week 1 - Dag 1-7",d:[
+{day:"Dag 1",meals:[{n:"Lunch (12:00): Omelet met spek, kaas & spinazie",c:"750 kcal"},{n:"Diner (18:00): Gehaktbal in jus met bloemkoolpuree",c:"1150 kcal"}]},
+{day:"Dag 2",meals:[{n:"Lunch (12:00): Gegrilde kip met avocado & feta",c:"800 kcal"},{n:"Diner (18:00): Varkenshaas met champignonsaus & sperziebonen",c:"1100 kcal"}]},
+{day:"Dag 3",meals:[{n:"Lunch (12:00): Tonijnsalade (uit blik) met mayonaise, ei & komkommer",c:"700 kcal"},{n:"Diner (18:00): Kippendijen uit de oven met knoflook & broccoli",c:"1200 kcal"}]},
+{day:"Dag 4",meals:[{n:"Lunch (12:00): Courgette frittata met cheddar",c:"750 kcal"},{n:"Diner (18:00): Rundergehakt met paprika-uiensaus & courgetti",c:"1150 kcal"}]},
+{day:"Dag 5",meals:[{n:"Lunch (12:00): Gegrilde halloumi met geroosterde paprika & olijven",c:"800 kcal"},{n:"Diner (18:00): Kip cordon bleu (keto) met snijbonen",c:"1100 kcal"}]},
+{day:"Dag 6",meals:[{n:"Lunch (12:00): Bacon-ei muffins met kaas",c:"750 kcal"},{n:"Diner (18:00): Varkenslapjes in mosterdsaus met spruitjes",c:"1150 kcal"}]},
+{day:"Dag 7",meals:[{n:"Lunch (12:00): Gevulde paprika's met gehakt & mozzarella",c:"800 kcal"},{n:"Diner (18:00): Ribeye met knoflookboter & groene asperges",c:"1100 kcal"}]}
+],g:["Eieren (18 stuks)","Spek (200g)","Geraspte kaas (400g)","Spinazie (zak, 300g)","Gehakt (500g)","Bloemkool (2 stuks)","Roomboter (250g)","Kipfilet (600g)","Avocado (3 stuks)","Feta (200g)","Varkenshaas (400g)","Champignons (400g)","Sperziebonen (400g)","Tonijn in blik (3 blikjes)","Mayonaise (pot)","Komkommer (2 stuks)","Broccoli (2 stuks)","Courgette (4 stuks)","Cheddar (300g)","Paprika (3 stuks)","Ui (1 kg)","Halloumi (300g)","Olijven (pot)","Mozzarella (2 balletjes)","Snijbonen (400g)","Spekreepjes (200g)","Varkenslapjes (500g)","Spruitjes (500g)","Mosterd (pot)","Ribeye (400g)","Groene asperges (300g)"]},
+2:{n:"Week 2 - Dag 8-14",d:[
+{day:"Dag 8",meals:[{n:"Lunch (12:00): Spinazie-omelet met champignons & geraspte kaas",c:"750 kcal"},{n:"Diner (18:00): Kip saté (zonder pindasaus) met komkommersalade",c:"1150 kcal"}]},
+{day:"Dag 9",meals:[{n:"Lunch (12:00): Tonijn-mayo salade met gekookt ei & sla",c:"700 kcal"},{n:"Diner (18:00): Gehaktbal met kaas uit de oven & bloemkool",c:"1200 kcal"}]},
+{day:"Dag 10",meals:[{n:"Lunch (12:00): Gegrilde kipfilet met pestomayo & tomaat",c:"800 kcal"},{n:"Diner (18:00): Varkensribbetjes met keto BBQ-saus & coleslaw",c:"1100 kcal"}]},
+{day:"Dag 11",meals:[{n:"Lunch (12:00): Eiwrap met spek, kaas & avocado",c:"750 kcal"},{n:"Diner (18:00): Rundergehakt met prei-roomsaus & spruitjes",c:"1150 kcal"}]},
+{day:"Dag 12",meals:[{n:"Lunch (12:00): Geroosterde paprika soep met room & kaascroutons (keto)",c:"800 kcal"},{n:"Diner (18:00): Kippendijen met citroen-knoflookboter & broccoli",c:"1100 kcal"}]},
+{day:"Dag 13",meals:[{n:"Lunch (12:00): Gegrilde halloumi met courgette & tomaat",c:"750 kcal"},{n:"Diner (18:00): Varkenshaas met spek & champignonroomsaus",c:"1150 kcal"}]},
+{day:"Dag 14",meals:[{n:"Lunch (12:00): Omelet met gerookte kaas & ui",c:"800 kcal"},{n:"Diner (18:00): Kip burger (zonder brood) met cheddar & sla",c:"1100 kcal"}]}
+],g:["Eieren (18 stuks)","Spinazie (300g)","Champignons (500g)","Geraspte kaas (400g)","Kipfilet (600g)","Komkommer (2 stuks)","Sla (1 krop)","Tonijn in blik (3 blikjes)","Mayonaise (pot)","Gehakt (500g)","Bloemkool (2 stuks)","Cheddar (300g)","Varkensribbetjes (600g)","Keto BBQ-saus (fles)","Witte kool (1 stuk)","Wortel (3 stuks)","Avocado (2 stuks)","Prei (2 stuks)","Room (250ml)","Spruitjes (500g)","Paprika (3 stuks)","Courgette (3 stuks)","Tomaat (4 stuks)","Kippendijen (600g)","Citroen (2 stuks)","Halloumi (:#2a2a2a;border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:15px;cursor:pointer;margin-bottom:16px}
+.grocery-section{background:#1a1a1a;border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid #2a2a2a}
+.grocery-title{font-size:16px;font-weight:700;margin-bottom:10px;color:#fbbf24}
+.grocery-item{padding:6px 0;border-bottom:1px solid #2a2a2a;font-size:14px}
+.grocery-item:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div id="home">
+<div class="header"><div class="logo"><div class="logo-icon"></div><h1>Keto Switcher</h1></div><p class="subtitle">4-weken budgetvriendelijk mealplan • 16:8 • 1900 kcal</p></div>
+<div class="card"><div class="card-title">📊 Dagelijkse Macro Doelen</div><div class="macro-grid"><div class="macro-item"><div class="macro-label">Calorieën</div><div class="macro-value cal">1900</div><div class="macro-pct">kcal</div></div><div class="macro-item"><div class="macro-label">Vet</div><div class="macro-value fat">135g</div><div class="macro-pct">~64%</div></div><div class="macro-item"><div class="macro-label">Eiwit</div><div class="macro-value protein">143g</div><div class="macro-pct">~30%</div></div><div class="macro-item"><div class="macro-label">Netto KH</div><div class="macro-value carbs">20g</div><div class="macro-pct">~4%</div></div></div></div>
+<div class="week-grid"><div class="week-btn active" onclick="showWeek(1)"><h3>Week 1</h3><p>Dag 1-7</p></div><div class="week-btn" onclick="showWeek(2)"><h3>Week 2</h3><p>Dag 8-14</p></div><div class="week-btn" onclick="showWeek(3)"><h3>Week 3</h3><p>Dag 15-21</p></div><div class="week-btn" onclick="showWeek(4)"><h3>Week 4</h3><p>Dag 22-28</p><div class="cart-btn">🛒</div></div></div>
+</div>
+<div id="week-view" style="display:none"><button class="back-btn" onclick="goHome()">← Terug</button><div id="week-content"></div></div>
+<script>
+const m={
+1:{n:"Week 1 - Dag 1-7",d:[
+{day:"Dag 1",meals:[{n:"Lunch (12:00): Omelet met spek, kaas & spinazie",c:"750 kcal"},{n:"Diner (18:00): Gehaktbal in jus met bloemkoolpuree",c:"1150 kcal"}]},
+{day:"Dag 2",meals:[{n:"Lunch (12:00): Gegrilde kip met avocado & feta",c:"800 kcal"},{n:"Diner (18:00): Varkenshaas met champignonsaus & sperziebonen",c:"1100 kcal"}]},
+{day:"Dag 3",meals:[{n:"Lunch (12:00): Tonijnsalade (uit blik) met mayonaise, ei & komkommer",c:"700 kcal"},{n:"Diner (18:00): Kippendijen uit de oven met knoflook & broccoli",c:"1200 kcal"}]},
+{day:"Dag 4",meals:[{n:"Lunch (12:00): Courgette frittata met cheddar",c:"750 kcal"},{n:"Diner (18:00): Rundergehakt met paprika-uiensaus & courgetti",c:"1150 kcal"}]},
+{day:"Dag 5",meals:[{n:"Lunch (12:00): Gegrilde halloumi met geroosterde paprika & olijven",c:"800 kcal"},{n:"Diner (18:00): Kip cordon bleu (keto) met snijbonen",c:"1100 kcal"}]},
+{day:"Dag 6",meals:[{n:"Lunch (12:00): Bacon-ei muffins met kaas",c:"750 kcal"},{n:"Diner (18:00): Varkenslapjes in mosterdsaus met spruitjes",c:"1150 kcal"}]},
+{day:"Dag 7",meals:[{n:"Lunch (12:00): Gevulde paprika's met gehakt & mozzarella",c:"800 kcal"},{n:"Diner (18:00): Ribeye met knoflookboter & groene asperges",c:"1100 kcal"}]}
+],g:["Eieren (18 stuks)","Spek (200g)","Geraspte kaas (400g)","Spinazie (zak, 300g)","Gehakt (500g)","Bloemkool (2 stuks)","Roomboter (250g)","Kipfilet (600g)","Avocado (3 stuks)","Feta (200g)","Varkenshaas (400g)","Champignons (400g)","Sperziebonen (400g)","Tonijn in blik (3 blikjes)","Mayonaise (pot)","Komkommer (2 stuks)","Broccoli (2 stuks)","Courgette (4 stuks)","Cheddar (300g)","Paprika (3 stuks)","Ui (1 kg)","Halloumi (300g)","Olijven (pot)","Mozzarella (2 balletjes)","Snijbonen (400g)","Spekreepjes (200g)","Varkenslapjes (500g)","Spruitjes (500g)","Mosterd (pot)","Ribeye (400g)","Groene asperges (300g)"]},
+2:{n:"Week 2 - Dag 8-14",d:[
+{day:"Dag 8",meals:[{n:"Lunch (12:00): Spinazie-omelet met champignons & geraspte kaas",c:"750 kcal"},{n:"Diner (18:00): Kip saté (zonder pindasaus) met komkommersalade",c:"1150 kcal"}]},
+{day:"Dag 9",meals:[{n:"Lunch (12:00): Tonijn-mayo salade met gekookt ei & sla",c:"700 kcal"},{n:"Diner (18:00): Gehaktbal met kaas uit de oven & bloemkool",c:"1200 kcal"}]},
+{day:"Dag 10",meals:[{n:"Lunch (12:00): Gegrilde kipfilet met pestomayo & tomaat",c:"800 kcal"},{n:"Diner (18:00): Varkensribbetjes met keto BBQ-saus & coleslaw",c:"1100 kcal"}]},
+{day:"Dag 11",meals:[{n:"Lunch (12:00): Eiwrap met spek, kaas & avocado",c:"750 kcal"},{n:"Diner (18:00): Rundergehakt met prei-roomsaus & spruitjes",c:"1150 kcal"}]},
+{day:"Dag 12",meals:[{n:"Lunch (12:00): Geroosterde paprika soep met room & kaascroutons (keto)",c:"800 kcal"},{n:"Diner (18:00): Kippendijen met citroen-knoflookboter & broccoli",c:"1100 kcal"}]},
+{day:"Dag 13",meals:[{n:"Lunch (12:00): Gegrilde halloumi met courgette & tomaat",c:"750 kcal"},{n:"Diner (18:00): Varkenshaas met spek & champignonroomsaus",c:"1150 kcal"}]},
+{day:"Dag 14",meals:[{n:"Lunch (12:00): Omelet met gerookte kaas & ui",c:"800 kcal"},{n:"Diner (18:00): Kip burger (zonder brood) met cheddar & sla",c:"1100 kcal"}]}
+],g:["Eieren (18 stuks)","Spinazie (300g)","Champignons (500g)","Geraspte kaas (400g)","Kipfilet (600g)","Komkommer (2 stuks)","Sla (1 krop)","Tonijn in blik (3 blikjes)","Mayonaise (pot)","Gehakt (500g)","Bloemkool (2 stuks)","Cheddar (300g)","Varkensribbetjes (600g)","Keto BBQ-saus (fles)","Witte kool (1 stuk)","Wortel (3 stuks)","Avocado (2 stuks)","Prei (2 stuks)","Room (250ml)","Spruitjes (500g)","Paprika (3 stuks)","Courgette (3 stuks)","Tomaat (4 stuks)","Kippendijen (600g)","Citroen (2 stuks)","Halloumi (300g)","Varkenshaas (400g)","Spek (200g)","Gerookte kaas (200g)","Ui (1 kg)","Rundergehakt (500g)"]},
+3:{n:"Week 3 - Dag 15-21",d:[
+{day:"Dag 15",meals:[{n:"Lunch (12:00): Gevulde champignons met gehakt & kaas",c:"750 kcal"},{n:"Diner (18:00): Kip uit de oven met knoflook & sperziebonen",c:"1150 kcal"}]},
+{day:"Dag 16",meals:[{n:"Lunch (12:00): Tonijnsalade met mayonaise, kappertjes & ei",c:"700 kcal"},{n:"Diner (18:00): Gehaktbal met tomatensaus & courgetti",c:"1200 kcal"}]},
+{day:"Dag 17",meals:[{n:"Lunch (12:00): Gegrilde kip met feta & olijven",c:"800 kcal"},{n:"Diner (18:00): Varkenslapjes met paprika-roomsaus & bloemkool",c:"1100 kcal"}]},
+{day:"Dag 18",meals:[{n:"Lunch (12:00): Ei muffins met spinazie & cheddar",c:"750 kcal"},{n:"Diner (18:00): Rundergehakt met kaas & gebakken ui",c:"1150 kcal"}]},
+{day:"Dag 19",meals:[{n:"Lunch (12:00): Courgette soep met room & gebakken spek",c:"800 kcal"},{n:"Diner (18:00): Kippendijen met mosterd-roomsaus & broccoli",c:"1100 kcal"}]},
+{day:"Dag 20",meals:[{n:"Lunch (12:00): Gegrilde halloumi met geroosterde groenten",c:"750 kcal"},{n:"Diner (18:00): Varkenshaas met pesto & sperziebonen",c:"1150 kcal"}]},
+{day:"Dag 21",meals:[{n:"Lunch (12:00): Omelet met champignons, spek & kaas",c:"800 kcal"},{n:"Diner (18:00): Kip uit de oven met citroen & knoflookboter",c:"1100 kcal"}]}
+],g:["Eieren (18 stuks)","Champignons (500g)","Gehakt (500g)","Geraspte kaas (400g)","Kipfilet (600g)","Knoflook (1 bol)","Sperziebonen (400g)","Tonijn in blik (3 blikjes)","Mayonaise (pot)","Kappertjes (potje)","Tomaat (blik, 400g)","Courgette (4 stuks)","Feta (200g)","Olijven (pot)","Varkenslapjes (500g)","Paprika (3 stuks)","Room (250ml)","Bloemkool (2 stuks)","Spinazie (300g)","Cheddar (300g)","Rundergehakt (500g)","Ui (1 kg)","Courgette (4 stuks)","Spek (200g)","Kippendijen (600g)","Mosterd (pot)","Halloumi (300g)","Varkenshaas (400g)","Pesto (pot)","Citroen (2 stuks)","Broccoli (2 stuks)"]},
+4:{n:"Week 4 - Dag 22-28",d:[
+{day:"Dag 22",meals:[{n:"Lunch (12:00): Gevulde tomaten met gehakt & mozzarella",c:"750 kcal"},{n:"Diner (18:00): Kip saté spiesen met komkommer-yoghurtsaus (keto)",c:"1150 kcal"}]},
+{day:"Dag 23",meals:[{n:"Lunch (12:00): Tonijn-omelet met kaas & ui",c:"700 kcal"},{n:"Diner (18:00): Gehaktbal met champignon-jus & spruitjes",c:"1200 kcal"}]},
+{day:"Dag 24",meals:[{n:"Lunch (12:00): Gegrilde kipfilet met avocado-mayo & sla",c:"800 kcal"},{n:"Diner (18:00): Varkensribbetjes met knoflookboter & coleslaw",c:"1100 kcal"}]},
+{day:"Dag 25",meals:[{n:"Lunch (12:00): Spinazie-omelet met feta & tomaat",c:"750 kcal"},{n:"Diner (18:00): Rundergehakt met prei & kaas uit de oven",c:"1150 kcal"}]},
+{day:"Dag 26",meals:[{n:"Lunch (12:00): Eiwrap met kaas, ham & mosterd",c:"800 kcal"},{n:"Diner (18:00): Kippendijen met paprika-roomsaus & broccoli",c:"1100 kcal"}]},
+{day:"Dag 27",meals:[{n:"Lunch (12:00): Gegrilde halloumi met courgette & pesto",c:"750 kcal"},{n:"Diner (18:00): Varkenshaas met spek & mosterdsaus",c:"1150 kcal"}]},
+{day:"Dag 28",meals:[{n:"Lunch (12:00): Omelet met gerookte kaas & champignons",c:"800 kcal"},{n:"Diner (18:00): Kip burger met cheddar, bacon & sla (zonder brood)",c:"1100 kcal"}]}
+],g:["Eieren (18 stuks)","Tomaat (6 stuks)","Gehakt (500g)","Mozzarella (2 balletjes)","Kipfilet (600g)","Komkommer (2 stuks)","Griekse yoghurt (500g)","Tonijn in blik (3 blikjes)","Geraspte kaas (400g)","Ui (1 kg)","Champignons (400g)","Spruitjes (500g)","Varkensribbetjes (600g)","Knoflook (1 bol)","Witte kool (1 stuk)","Wortel (3 stuks)","Avocado (2 stuks)","Mayonaise (pot)","Sla (1 krop)","Spinazie (300g)","Feta (200g)","Prei (2 stuks)","Cheddar (300g)","Ham (200g)","Mosterd (pot)","Kippendijen (600g)","Paprika (3 stuks)","Room (250ml)","Broccoli (2 stuks)","Halloumi (300g)","Courgette (3 stuks)","Pesto (pot)","Spek (200g)","Varkenshaas (400g)","Gerookte kaas (200g)","Bacon (200g)"]}
+};
+function showWeek(w){const p=m[w];let h=`<h2 style="margin-bottom:20px;font-size:24px">${p.n}</h2>`;p.d.forEach(d=>{h+=`<div class="day-card"><div class="day-title">${d.day}</div>`;d.meals.forEach(e=>{h+=`<div class="meal"><span class="meal-name">${e.n}</span><span class="meal-cal">${e.c}</span></div>`});h+=`</div>`});h+=`<div class="grocery-section"><div class="grocery-title">🛒 Boodschappenlijst Week ${w}</div>`;p.g.forEach(i=>{h+=`<div class="grocery-item">☐ ${i}</div>`});h+=`</div>`;document.getElementById("week-content").innerHTML=h;document.getElementById("home").style.display="none";document.getElementById("week-view").style.display="block";window.scrollTo(0,0)}
+function goHome(){document.getElementById("home").style.display="block";document.getElementById("week-view").style.display="none";window.scrollTo(0,0)}
+</script>
+</body>
+</html>
