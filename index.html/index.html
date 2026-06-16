@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>Keto Switcher</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+  -webkit-tap-highlight-color: transparent;
+}
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+}
+.logo h1 {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle {
+  color: #9ca3af;
+  font-size: 15px;
+}
+.card {
+  background: #1a1a1a;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid #2a2a2a;
+}
+.card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.macro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.macro-item {
+  background: #0f0f0f;
+  border-radius: 16px;
+  padding: 20px 12px;
+  text-align: center;
+  border: 1px solid #2a2a2a;
+}
+.macro-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+.macro-value {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+.macro-unit {
+  font-size: 14px;
+  color: #9ca3af;
+}
+.macro-pct {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+.cal { color: #60a5fa; }
+.fat { color: #fbbf24; }
+.protein { color: #f87171; }
+.carbs { color: #4ade80; }
+.week-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.week-btn {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  padding: 24px 16px;
+  text-align: center;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.week-btn.active {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-color: transparent;
+}
+.week-btn:active {
+  transform: scale(0.96);
+}
+.week-btn h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.week-btn p {
+  font-size: 13px;
+  color: #9ca3af;
+}
+.week-btn.active p {
+  color: rgba(255,255,255,0.8);
+}
+.cart-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  background: rgba(59, 130, 246, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.meal-plan {
+  display: none;
+}
+.meal-plan.active {
+  display: block;
+}
+.day-card {
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #2a2a2a;
+}
+.day-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #60a5fa;
+}
+.meal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+.meal:last-child {
+  border-bottom: none;
+}
+.meal-name {
+  font-size: 15px;
+}
+.meal-cal {
+  font-size: 13px;
+  color: #9ca3af;
+}
+.back-btn {
+  background: #2a2a2a;
+  border: none;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.back-btn:active {
+  background: #3a3a3a;
+}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon"></div>
+      <h1>Keto Switcher</h1>
+    </div>
+    <p class="subtitle">4-weken budgetvriendelijk mealplan • 16:8 • 1900 kcal</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Dagelijkse Macro Doelen</div>
+    <div class="macro-grid">
+      <div class="macro-item">
+        <div class="macro-label">Calorieën</div>
+        <div class="macro-value cal">1900</div>
+        <div class="macro-unit">kcal</div>
+      </div>
+      <div class="macro-item">
+        <div class="macro-label">Vet</div>
+        <div class="macro-value fat">135g</div>
+        <div class="macro-pct">~64%</div>
+      </div>
+      <div class="macro-item">
+        <div class="macro-label">Eiwit</div>
+        <div class="macro-value protein">143g</div>
+        <div class="macro-pct">~30%</div>
+      </div>
+      <div class="macro-item">
+        <div class="macro-label">Netto KH</div>
+        <div class="macro-value carbs">20g</div>
+        <div class="macro-pct">~4%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="week-grid">
+    <div class="week-btn active" onclick="showWeek(1)">
+      <h3>Week 1</h3>
+      <p>Dag 1-7</p>
+    </div>
+    <div class="week-btn" onclick="showWeek(2)">
+      <h3>Week 2</h3>
+      <p>Dag 8-14</p>
+    </div>
+    <div class="week-btn" onclick="showWeek(3)">
+      <h3>Week 3</h3>
+      <p>Dag 15-21</p>
+    </div>
+    <div class="week-btn" onclick="showWeek(4)">
+      <h3>Week 4</h3>
+      <p>Dag 22-28</p>
+      <div class="cart-btn">🛒</div>
+    </div>
+  </div>
+</div>
+
+<div id="week-view" style="display:none;">
+  <button class="back-btn" onclick="goHome()">← Terug</button>
+  <div id="week-content"></div>
+</div>
+
+<script>
+const mealPlans = {
+  1: {
+    name: "Week 1 - Dag 1-7",
+    days: [
+      { day: "Dag 1", meals: [
+        { name: "Ontbijt: Keto smoothie met avocado", cal: "450 kcal" },
+        { name: "Lunch: Caesar salade met kip", cal: "650 kcal" },
+        { name: "Diner: Zalm met groene asperges", cal: "800 kcal" }
+      ]},
+      { day: "Dag 2", meals: [
+        { name: "Ontbijt: Omelet met spinazie", cal: "420 kcal" },
+        { name: "Lunch: Tonijnsalade in komkommer", cal: "580 kcal" },
+        { name: "Diner: Kippendijen met broccoli", cal: "900 kcal" }
+      ]},
+      { day: "Dag 3", meals: [
+        { name: "Ontbijt: Chia pudding met kokos", cal: "380 kcal" },
+        { name: "Lunch: Gegrilde kip met avocado", cal: "620 kcal" },
+        { name: "Diner: Burger zonder brood met kaas", cal: "900 kcal" }
+      ]},
+      { day: "Dag 4", meals: [
+        { name: "Ontbijt: Gekookte eieren met mayo", cal: "400 kcal" },
+        { name: "Lunch: Courgetti met pesto", cal: "550 kcal" },
+        { name: "Diner: Varkenshaas met champignons", cal: "950 kcal" }
+      ]},
+      { day: "Dag 5", meals: [
+        { name: "Ontbijt: Keto pannenkoeken", cal: "460 kcal" },
+        { name: "Lunch: Salade met geitenkaas", cal: "600 kcal" },
+        { name: "Diner: Kabeljauw met botersaus", cal: "840 kcal" }
+      ]},
+      { day: "Dag 6", meals: [
+        { name: "Ontbijt: Bacon & eieren", cal: "500 kcal" },
+        { name: "Lunch: Gevulde paprika's", cal: "580 kcal" },
+        { name: "Diner: Ribeye met groenten", cal: "820 kcal" }
+      ]},
+      { day: "Dag 7", meals: [
+        { name: "Ontbijt: Volle yoghurt met noten", cal: "430 kcal" },
+        { name: "Lunch: Gegrilde zalm salade", cal: "650 kcal" },
+        { name: "Diner: Kip curry met kokosmelk", cal: "820 kcal" }
+      ]}
+    ]
+  },
+  2: {
+    name: "Week 2 - Dag 8-14",
+    days: [
+      { day: "Dag 8", meals: [
+        { name: "Ontbijt: Avocado met ei", cal: "440 kcal" },
+        { name: "Lunch: Kip wrap in sla", cal: "610 kcal" },
+        { name: "Diner: Lamsvlees met ratatouille", cal: "850 kcal" }
+      ]},
+      { day: "Dag 9", meals: [
+        { name: "Ontbijt: Keto granola", cal: "470 kcal" },
+        { name: "Lunch: Tonijnsteak salade", cal: "590 kcal" },
+        { name: "Diner: Gegrilde kip met pesto", cal: "840 kcal" }
+      ]},
+      { day: "Dag 10", meals: [
+        { name: "Ontbijt: Spinazie smoothie", cal: "410 kcal" },
+        { name: "Lunch: Gevulde komkommer", cal: "560 kcal" },
+        { name: "Diner: Zalm met citroenboter", cal: "930 kcal" }
+      ]},
+      { day: "Dag 11", meals: [
+        { name: "Ontbijt: Ei muffins", cal: "450 kcal" },
+        { name: "Lunch: Kipsalade met feta", cal: "620 kcal" },
+        { name: "Diner: Varkensribbetjes met sla", cal: "830 kcal" }
+      ]},
+      { day: "Dag 12", meals: [
+        { name: "Ontbijt: Kokos yoghurt", cal: "390 kcal" },
+        { name: "Lunch: Gegrilde groenten met halloumi", cal: "640 kcal" },
+        { name: "Diner: Kip saté met pindasaus", cal: "870 kcal" }
+      ]},
+      { day: "Dag 13", meals: [
+        { name: "Ontbijt: Omelet met champignons", cal: "430 kcal" },
+        { name: "Lunch: Zalmsalade", cal: "600 kcal" },
+        { name: "Diner: Biefstuk met spinazie", cal: "870 kcal" }
+      ]},
+      { day: "Dag 14", meals: [
+        { name: "Ontbijt: Keto brood met avocado", cal: "480 kcal" },
+        { name: "Lunch: Gevulde tomaten", cal: "570 kcal" },
+        { name: "Diner: Kip fajita's zonder wrap", cal: "850 kcal" }
+      ]}
+    ]
+  },
+  3: {
+    name: "Week 3 - Dag 15-21",
+    days: [
+      { day: "Dag 15", meals: [
+        { name: "Ontbijt: Geroosterd keto brood", cal: "460 kcal" },
+        { name: "Lunch: Gegrilde kip met olijven", cal: "590 kcal" },
+        { name: "Diner: Scampi in knoflookboter", cal: "850 kcal" }
+      ]},
+      { day: "Dag 16", meals: [
+        { name: "Ontbijt: Chia pudding met bessen", cal: "420 kcal" },
+        { name: "Lunch: Salade met gerookte zalm", cal: "630 kcal" },
+        { name: "Diner: Kippenvleugels met bleekselderij", cal: "850 kcal" }
+      ]},
+      { day: "Dag 17", meals: [
+        { name: "Ontbijt: Ei wrap met spek", cal: "480 kcal" },
+        { name: "Lunch: Gevulde avocado", cal: "550 kcal" },
+        { name: "Diner: Varkenslapjes met kaassaus", cal: "870 kcal" }
+      ]},
+      { day: "Dag 18", meals: [
+        { name: "Ontbijt: Keto pannenkoeken", cal: "470 kcal" },
+        { name: "Lunch: Tonijnsalade", cal: "610 kcal" },
+        { name: "Diner: Gegrilde zalm met dille", cal: "820 kcal" }
+      ]},
+      { day: "Dag 19", meals: [
+        { name: "Ontbijt: Bacon & avocado", cal: "450 kcal" },
+        { name: "Lunch: Kip salade met noten", cal: "640 kcal" },
+        { name: "Diner: Lamsburger met feta", cal: "810 kcal" }
+      ]},
+      { day: "Dag 20", meals: [
+        { name: "Ontbijt: Smoothie met MCT-olie", cal: "430 kcal" },
+        { name: "Lunch: Gegrilde groenten met mozzarella", cal: "580 kcal" },
+        { name: "Diner: Kip cordon bleu (keto)", cal: "890 kcal" }
+      ]},
+      { day: "Dag 21", meals: [
+        { name: "Ontbijt: Gekookte eieren met kaas", cal: "440 kcal" },
+        { name: "Lunch: Zalm wrap in sla", cal: "620 kcal" },
+        { name: "Diner: Biefstuk met champignonsaus", cal: "840 kcal" }
+      ]}
+    ]
+  },
+  4: {
+    name: "Week 4 - Dag 22-28",
+    days: [
+      { day: "Dag 22", meals: [
+        { name: "Ontbijt: Keto granola met yoghurt", cal: "470 kcal" },
+        { name: "Lunch: Gegrilde kip met avocado", cal: "600 kcal" },
+        { name: "Diner: Zalm met pesto groenten", cal: "830 kcal" }
+      ]},
+      { day: "Dag 23", meals: [
+        { name: "Ontbijt: Omelet met kaas", cal: "450 kcal" },
+        { name: "Lunch: Tonijn in komkommer", cal: "570 kcal" },
+        { name: "Diner: Kippendijen met knoflook", cal: "880 kcal" }
+      ]},
+      { day: "Dag 24", meals: [
+        { name: "Ontbijt: Avocado toast (keto brood)", cal: "460 kcal" },
+        { name: "Lunch: Salade met gegrilde zalm", cal: "640 kcal" },
+        { name: "Diner: Varkenshaas met spek", cal: "800 kcal" }
+      ]},
+      { day: "Dag 25", meals: [
+        { name: "Ontbijt: Ei muffins met spinazie", cal: "430 kcal" },
+        { name: "Lunch: Gevulde paprika's", cal: "590 kcal" },
+        { name: "Diner: Kabeljauw met hollandaise", cal: "880 kcal" }
+      ]},
+      { day: "Dag 26", meals: [
+        { name: "Ontbijt: Keto smoothie", cal: "440 kcal" },
+        { name: "Lunch: Gegrilde halloumi salade", cal: "610 kcal" },
+        { name: "Diner: Ribeye met groene asperges", cal: "850 kcal" }
+      ]},
+      { day: "Dag 27", meals: [
+        { name: "Ontbijt: Chia pudding", cal: "410 kcal" },
+        { name: "Lunch: Kip salade met avocado", cal: "630 kcal" },
+        { name: "Diner: Kip curry met kokos", cal: "860 kcal" }
+      ]},
+      { day: "Dag 28", meals: [
+        { name: "Ontbijt: Bacon & eieren", cal: "490 kcal" },
+        { name: "Lunch: Zalmsalade", cal: "600 kcal" },
+        { name: "Diner: Biefstuk met boter", cal: "810 kcal" }
+      ]}
+    ]
+  }
+};
+
+function showWeek(weekNum) {
+  const week = mealPlans[weekNum];
+  let html = `<h2 style="margin-bottom:20px;font-size:24px;">${week.name}</h2>`;
+  week.days.forEach(day => {
+    html += `<div class="day-card"><div class="day-title">${day.day}</div>`;
+    day.meals.forEach(meal => {
+      html += `<div class="meal"><span class="meal-name">${meal.name}</span><span class="meal-cal">${meal.cal}</span></div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('week-content').innerHTML = html;
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('week-view').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function goHome() {
+  document.getElementById('home').style.display = 'block';
+  document.getElementById('week-view').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
